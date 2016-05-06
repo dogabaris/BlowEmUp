@@ -31,6 +31,22 @@ public class Main extends Activity {
                     startActivity(oyun);
                 }
             });
+
+            btn_hakkinda.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent hakkinda = new Intent(v.getContext(), Hakkinda.class);
+                    startActivity(hakkinda);
+                }
+            });
+
+            btn_cikis.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                    System.exit(0);
+                }
+            });
         } catch (Exception e) {
             Log.e("Activate", "Error in activity", e);
 
