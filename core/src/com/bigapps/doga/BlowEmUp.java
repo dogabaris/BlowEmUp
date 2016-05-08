@@ -12,26 +12,33 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class BlowEmUp extends Game {
-	private Texture dropImage;
+	private Texture yesilBalon;
+	private Texture siyahBalon;
 	private Texture bucketImage;
 	private Sound dropSound;
 	private Music rainMusic;
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
 	private Rectangle bucket;
-	private Array<Rectangle> raindrops;
-	private long lastDropTime;
-	
+	//private Map<String,Rectangle> balonlar;
+	private HashMap<String, Rectangle> balonlar = new HashMap<String, Rectangle>();
+	//private Array<Rectangle> balonlar;
+	private long yesilDropTime;
+	private long siyahDropTime;
+	private int random;
+
 	@Override
 	public void create () {
 		// load the images for the droplet and the bucket, 64x64 pixels each
-		dropImage = new Texture(Gdx.files.internal("balon.png"));
+		yesilBalon = new Texture(Gdx.files.internal("yesilbalon.png"));
+		siyahBalon = new Texture(Gdx.files.internal("siyahbalon.png"));
 		bucketImage = new Texture(Gdx.files.internal("kova.png"));
 
 		// load the drop sound effect and the rain background "music"
@@ -55,17 +62,30 @@ public class BlowEmUp extends Game {
 		bucket.height = 64;
 
 		// create the raindrops array and spawn the first raindrop
-		raindrops = new Array<Rectangle>();
-		spawnRaindrop();
+		//balonlar = new HashMap<String, Rectangle>();
+		balonlar = new HashMap<String, Rectangle>();
+
+
+		yesilBalonOlustur();
+		siyahBalonOlustur();
 	}
-	private void spawnRaindrop() {
-		Rectangle raindrop = new Rectangle();
-		raindrop.x = MathUtils.random(0, 800-64);
-		raindrop.y = 0;
-		raindrop.width = 64;
-		raindrop.height = 64;
-		raindrops.add(raindrop);
-		lastDropTime = TimeUtils.nanoTime();
+	private void yesilBalonOlustur() {
+		Rectangle yesilBalon = new Rectangle();
+		yesilBalon.x = MathUtils.random(0, 800-64);
+		yesilBalon.y = 0;
+		yesilBalon.width = 64;
+		yesilBalon.height = 64;
+		balonlar.put("yesilbalon",yesilBalon);
+		yesilDropTime = TimeUtils.nanoTime();
+	}
+	private void siyahBalonOlustur() {
+		Rectangle siyahBalon = new Rectangle();
+		siyahBalon.x = MathUtils.random(0, 800-64);
+		siyahBalon.y = 0;
+		siyahBalon.width = 64;
+		siyahBalon.height = 64;
+		balonlar.put("siyahbalon",siyahBalon);
+		siyahDropTime = TimeUtils.nanoTime();
 	}
 
 	@Override
@@ -88,8 +108,17 @@ public class BlowEmUp extends Game {
 		// all drops
 		batch.begin();
 		batch.draw(bucketImage, bucket.x, bucket.y);
-		for(Rectangle raindrop: raindrops) {
-			batch.draw(dropImage, raindrop.x, raindrop.y);
+
+		for(Map.Entry<String, Rectangle> entry : balonlar.entrySet()) {
+			String tur = entry.getKey();
+			Rectangle balon = entry.getValue();
+
+			if(tur.equals("yesilbalon"))
+				batch.draw(yesilBalon, balon.x, balon.y);
+			if(tur.equals("siyahbalon"))
+				batch.draw(siyahBalon, balon.x, balon.y);
+
+
 		}
 		batch.end();
 
@@ -108,26 +137,35 @@ public class BlowEmUp extends Game {
 		if(bucket.x > 800 - 64) bucket.x = 800 - 64;
 
 		// check if we need to create a new raindrop
-		if(TimeUtils.nanoTime() - lastDropTime > 1000000000) spawnRaindrop();
+		if(TimeUtils.nanoTime() - yesilDropTime > 1000000000) yesilBalonOlustur();
+		if(TimeUtils.nanoTime() - siyahDropTime > 1050000000) siyahBalonOlustur();
 
 		// move the raindrops, remove any that are beneath the bottom edge of
 		// the screen or that hit the bucket. In the later case we play back
 		// a sound effect as well.
-		Iterator<Rectangle> iter = raindrops.iterator();
-		while(iter.hasNext()) {
-			Rectangle raindrop = iter.next();
-			raindrop.y += 200 * Gdx.graphics.getDeltaTime();
-			if(raindrop.y + 64 < 0) iter.remove();
-			if(raindrop.overlaps(bucket)) {
+
+		for(Iterator<Map.Entry<String, Rectangle>> it = balonlar.entrySet().iterator(); it.hasNext(); ) {
+			Map.Entry<String, Rectangle> entry = it.next();
+
+			String tur = entry.getKey();
+			Rectangle balon = entry.getValue();
+
+			balon.y += 480 * Gdx.graphics.getDeltaTime();
+			if(balon.y + 64 < 0)
+				it.remove();
+			if(balon.overlaps(bucket)) {
 				dropSound.play();
-				iter.remove();
+				it.remove();
 			}
+
 		}
+
 	}
 	@Override
 	public void dispose() {
 		// dispose of all the native resources
-		dropImage.dispose();
+		yesilBalon.dispose();
+		siyahBalon.dispose();
 		bucketImage.dispose();
 		dropSound.dispose();
 		rainMusic.dispose();
