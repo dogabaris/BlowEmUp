@@ -3,6 +3,7 @@ package com.bigapps.doga;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
@@ -18,36 +19,87 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class BlowEmUp extends Game {
+public class BlowEmUp extends Game implements InputProcessor {
 	private Texture yesilBalon;
 	private Texture siyahBalon;
 	private Texture kirmiziBalon;
 	private Texture sariBalon;
-	private Texture bucketImage;
 	private Sound dropSound;
 	private Music rainMusic;
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
-	private Rectangle bucket;
-	//private Map<String,Rectangle> balonlar;
 	private HashMap<String, Rectangle> balonlar = new HashMap<String, Rectangle>();
-	//private Array<Rectangle> balonlar;
 	private long yesilDropTime;
 	private long siyahDropTime;
 	private long kirmiziDropTime;
 	private long sariDropTime;
+	private long tiklamaDropTime;
 	private int random;
+	private TouchInfo touch;
+	private int touchX;
+	private int touchY;
+
+	class TouchInfo {
+		public float touchX = -10;
+		public float touchY = -10;
+		public boolean touched = false;
+	}
+
+	@Override
+	public boolean keyDown(int keycode) {
+		return false;
+	}
+
+	@Override
+	public boolean keyUp(int keycode) {
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		return false;
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+			touch.touchX = screenX;
+			touch.touchY = screenY;
+			touch.touched = true;
+		return true;
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		return false;
+	}
+
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		return false;
+	}
+
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(int amount) {
+		return false;
+	}
 
 	@Override
 	public void create () {
+
+		Gdx.input.setInputProcessor(this);
+
 		// load the images for the droplet and the bucket, 64x64 pixels each
 		yesilBalon = new Texture(Gdx.files.internal("yesilbalon.png"));
 		kirmiziBalon = new Texture(Gdx.files.internal("kirmizibalon.png"));
 		siyahBalon = new Texture(Gdx.files.internal("siyahbalon.png"));
 		sariBalon = new Texture(Gdx.files.internal("saribalon.png"));
-		bucketImage = new Texture(Gdx.files.internal("kova.png"));
 
-		// load the drop sound effect and the rain background "music"
+		// load
 		dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
 		rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
 
@@ -60,23 +112,15 @@ public class BlowEmUp extends Game {
 		camera.setToOrtho(false, 800, 480);
 		batch = new SpriteBatch();
 
-		// create a Rectangle to logically represent the bucket
-		bucket = new Rectangle();
-		bucket.x = 800 / 2 - 64 / 2; // center the bucket horizontally
-		bucket.y = 415; // bottom left corner of the bucket is 20 pixels above the bottom screen edge
-		bucket.width = 64;
-		bucket.height = 64;
-
 		// create the raindrops array and spawn the first raindrop
-		//balonlar = new HashMap<String, Rectangle>();
 		balonlar = new HashMap<String, Rectangle>();
+		touch = new TouchInfo();
 
-		sariBalonOlustur();
 	}
 	private void yesilBalonOlustur() {
 		Rectangle yesilBalon = new Rectangle();
 		yesilBalon.x = MathUtils.random(0, 800-64);
-		yesilBalon.y = -32;
+		yesilBalon.y = -64;
 		yesilBalon.width = 64;
 		yesilBalon.height = 64;
 		balonlar.put("yesilbalon",yesilBalon);
@@ -85,7 +129,7 @@ public class BlowEmUp extends Game {
 	private void siyahBalonOlustur() {
 		Rectangle siyahBalon = new Rectangle();
 		siyahBalon.x = MathUtils.random(0, 800-64);
-		siyahBalon.y = -32;
+		siyahBalon.y = -64;
 		siyahBalon.width = 64;
 		siyahBalon.height = 64;
 		balonlar.put("siyahbalon",siyahBalon);
@@ -94,7 +138,7 @@ public class BlowEmUp extends Game {
 	private void kirmiziBalonOlustur() {
 		Rectangle kirmiziBalon = new Rectangle();
 		kirmiziBalon.x = MathUtils.random(0, 800-64);
-		kirmiziBalon.y = -32;
+		kirmiziBalon.y = -64;
 		kirmiziBalon.width = 64;
 		kirmiziBalon.height = 64;
 		balonlar.put("kirmizibalon",kirmiziBalon);
@@ -129,7 +173,6 @@ public class BlowEmUp extends Game {
 		// begin a new batch and draw the bucket and
 		// all drops
 		batch.begin();
-		batch.draw(bucketImage, bucket.x, bucket.y);
 
 		for(Map.Entry<String, Rectangle> entry : balonlar.entrySet()) {
 			String tur = entry.getKey();
@@ -152,31 +195,23 @@ public class BlowEmUp extends Game {
 			Vector3 touchPos = new Vector3();
 			touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 			camera.unproject(touchPos);
-			bucket.x = touchPos.x - 64 / 2;
+			touchX=(int) touchPos.x;
+			touchY=(int) touchPos.y;
+			touchDown(touchX,touchY,0, Input.Buttons.LEFT);
 		}
-		if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) bucket.x -= 200 * Gdx.graphics.getDeltaTime();
-		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) bucket.x += 200 * Gdx.graphics.getDeltaTime();
-
-		// make sure the bucket stays within the screen bounds
-		if(bucket.x < 0) bucket.x = 0;
-		if(bucket.x > 800 - 64) bucket.x = 800 - 64;
 
 		// check if we need to create a new raindrop
-		if(TimeUtils.nanoTime() - yesilDropTime > MathUtils.random(900000000, 1050000000)) yesilBalonOlustur();
-		if(TimeUtils.nanoTime() - siyahDropTime > MathUtils.random(950000000, 1100000000)) siyahBalonOlustur();
-		if(TimeUtils.nanoTime() - kirmiziDropTime > MathUtils.random(950000000, 1050000000)) kirmiziBalonOlustur();
+		if(TimeUtils.nanoTime() - yesilDropTime > MathUtils.random(1200000000, 1400000000)) yesilBalonOlustur();
+		if(TimeUtils.nanoTime() - siyahDropTime > MathUtils.random(1200000000, 1300000000)) siyahBalonOlustur();
+		if(TimeUtils.nanoTime() - kirmiziDropTime > MathUtils.random(1200000000, 1500000000)) kirmiziBalonOlustur();
 		if(TimeUtils.nanoTime() - sariDropTime > 1000000000) sariBalonOlustur();
-
-		// move the raindrops, remove any that are beneath the bottom edge of
-		// the screen or that hit the bucket. In the later case we play back
-		// a sound effect as well.
 
 		for(Iterator<Map.Entry<String, Rectangle>> it = balonlar.entrySet().iterator(); it.hasNext(); ) {
 			Map.Entry<String, Rectangle> entry = it.next();
 			Rectangle balon = entry.getValue();
 
 			if(entry.getKey().equals("saribalon")){
-				balon.x +=  Gdx.graphics.getDeltaTime();//Sıkıntılı yer
+				balon.x +=  Gdx.graphics.getDeltaTime();
 			}
 			if(entry.getKey().equals("kirmizibalon")){
 				balon.y += 480 * Gdx.graphics.getDeltaTime();
@@ -191,9 +226,11 @@ public class BlowEmUp extends Game {
 			}
 			if(balon.y + 64 < 0)
 				it.remove();
-			if(balon.overlaps(bucket)) {
+			if(balon.contains(touch.touchX,touch.touchY)) {//Balona dokunulduğunda
 				dropSound.play();
 				it.remove();
+				touch = new TouchInfo();
+				System.out.println(touch.touched +" "+touch.touchX +" "+ touch.touchY);
 			}
 
 		}
@@ -206,7 +243,6 @@ public class BlowEmUp extends Game {
 		siyahBalon.dispose();
 		kirmiziBalon.dispose();
 		sariBalon.dispose();
-		bucketImage.dispose();
 		dropSound.dispose();
 		rainMusic.dispose();
 		batch.dispose();
