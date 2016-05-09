@@ -70,7 +70,10 @@ public class BlowEmUp extends Game implements InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		return false;
+			touch.touchX = -10;
+			touch.touchY = -10;
+			touch.touched = false;
+		return true;
 	}
 
 	@Override
@@ -226,10 +229,10 @@ public class BlowEmUp extends Game implements InputProcessor {
 			}
 			if(balon.y + 64 < 0)
 				it.remove();
-			if(balon.contains(touch.touchX,touch.touchY)) {//Balona dokunulduğunda
+			if(balon.contains(touch.touchX,touch.touchY) && touch.touched) {//Balona dokunulduğunda
 				dropSound.play();
 				it.remove();
-				touch = new TouchInfo();
+				touchUp(touchX,touchY,0, Input.Buttons.LEFT);
 				System.out.println(touch.touched +" "+touch.touchX +" "+ touch.touchY);
 			}
 
