@@ -21,6 +21,8 @@ import java.util.Map;
 public class BlowEmUp extends Game {
 	private Texture yesilBalon;
 	private Texture siyahBalon;
+	private Texture kirmiziBalon;
+	private Texture sariBalon;
 	private Texture bucketImage;
 	private Sound dropSound;
 	private Music rainMusic;
@@ -32,13 +34,17 @@ public class BlowEmUp extends Game {
 	//private Array<Rectangle> balonlar;
 	private long yesilDropTime;
 	private long siyahDropTime;
+	private long kirmiziDropTime;
+	private long sariDropTime;
 	private int random;
 
 	@Override
 	public void create () {
 		// load the images for the droplet and the bucket, 64x64 pixels each
 		yesilBalon = new Texture(Gdx.files.internal("yesilbalon.png"));
+		kirmiziBalon = new Texture(Gdx.files.internal("kirmizibalon.png"));
 		siyahBalon = new Texture(Gdx.files.internal("siyahbalon.png"));
+		sariBalon = new Texture(Gdx.files.internal("saribalon.png"));
 		bucketImage = new Texture(Gdx.files.internal("kova.png"));
 
 		// load the drop sound effect and the rain background "music"
@@ -65,14 +71,12 @@ public class BlowEmUp extends Game {
 		//balonlar = new HashMap<String, Rectangle>();
 		balonlar = new HashMap<String, Rectangle>();
 
-
-		yesilBalonOlustur();
-		siyahBalonOlustur();
+		sariBalonOlustur();
 	}
 	private void yesilBalonOlustur() {
 		Rectangle yesilBalon = new Rectangle();
 		yesilBalon.x = MathUtils.random(0, 800-64);
-		yesilBalon.y = 0;
+		yesilBalon.y = -32;
 		yesilBalon.width = 64;
 		yesilBalon.height = 64;
 		balonlar.put("yesilbalon",yesilBalon);
@@ -81,11 +85,29 @@ public class BlowEmUp extends Game {
 	private void siyahBalonOlustur() {
 		Rectangle siyahBalon = new Rectangle();
 		siyahBalon.x = MathUtils.random(0, 800-64);
-		siyahBalon.y = 0;
+		siyahBalon.y = -32;
 		siyahBalon.width = 64;
 		siyahBalon.height = 64;
 		balonlar.put("siyahbalon",siyahBalon);
 		siyahDropTime = TimeUtils.nanoTime();
+	}
+	private void kirmiziBalonOlustur() {
+		Rectangle kirmiziBalon = new Rectangle();
+		kirmiziBalon.x = MathUtils.random(0, 800-64);
+		kirmiziBalon.y = -32;
+		kirmiziBalon.width = 64;
+		kirmiziBalon.height = 64;
+		balonlar.put("kirmizibalon",kirmiziBalon);
+		kirmiziDropTime = TimeUtils.nanoTime();
+	}
+	private void sariBalonOlustur() {
+		Rectangle sariBalon = new Rectangle();
+		sariBalon.x = MathUtils.random(0, 800-64);
+		sariBalon.y = MathUtils.random(0, 480-64);
+		sariBalon.width = 64;
+		sariBalon.height = 64;
+		balonlar.put("saribalon",sariBalon);
+		sariDropTime = TimeUtils.nanoTime();
 	}
 
 	@Override
@@ -117,7 +139,10 @@ public class BlowEmUp extends Game {
 				batch.draw(yesilBalon, balon.x, balon.y);
 			if(tur.equals("siyahbalon"))
 				batch.draw(siyahBalon, balon.x, balon.y);
-
+			if(tur.equals("kirmizibalon"))
+				batch.draw(kirmiziBalon, balon.x, balon.y);
+			if(tur.equals("saribalon"))
+				batch.draw(sariBalon, balon.x, balon.y);
 
 		}
 		batch.end();
@@ -137,8 +162,10 @@ public class BlowEmUp extends Game {
 		if(bucket.x > 800 - 64) bucket.x = 800 - 64;
 
 		// check if we need to create a new raindrop
-		if(TimeUtils.nanoTime() - yesilDropTime > 1000000000) yesilBalonOlustur();
-		if(TimeUtils.nanoTime() - siyahDropTime > 1050000000) siyahBalonOlustur();
+		if(TimeUtils.nanoTime() - yesilDropTime > MathUtils.random(900000000, 1050000000)) yesilBalonOlustur();
+		if(TimeUtils.nanoTime() - siyahDropTime > MathUtils.random(950000000, 1100000000)) siyahBalonOlustur();
+		if(TimeUtils.nanoTime() - kirmiziDropTime > MathUtils.random(950000000, 1050000000)) kirmiziBalonOlustur();
+		if(TimeUtils.nanoTime() - sariDropTime > 1000000000) sariBalonOlustur();
 
 		// move the raindrops, remove any that are beneath the bottom edge of
 		// the screen or that hit the bucket. In the later case we play back
@@ -146,11 +173,22 @@ public class BlowEmUp extends Game {
 
 		for(Iterator<Map.Entry<String, Rectangle>> it = balonlar.entrySet().iterator(); it.hasNext(); ) {
 			Map.Entry<String, Rectangle> entry = it.next();
-
-			String tur = entry.getKey();
 			Rectangle balon = entry.getValue();
 
-			balon.y += 480 * Gdx.graphics.getDeltaTime();
+			if(entry.getKey().equals("saribalon")){
+				balon.x +=  Gdx.graphics.getDeltaTime();//Sıkıntılı yer
+			}
+			if(entry.getKey().equals("kirmizibalon")){
+				balon.y += 480 * Gdx.graphics.getDeltaTime();
+				random =MathUtils.random(-6, 6);
+				if(random>0)
+					balon.x += random;
+				if(random<=0)
+					balon.x += random;
+			}
+			else if(entry.getKey().equals("yesilbalon")||entry.getKey().equals("siyahbalon")){
+				balon.y += 480 * Gdx.graphics.getDeltaTime();
+			}
 			if(balon.y + 64 < 0)
 				it.remove();
 			if(balon.overlaps(bucket)) {
@@ -166,6 +204,8 @@ public class BlowEmUp extends Game {
 		// dispose of all the native resources
 		yesilBalon.dispose();
 		siyahBalon.dispose();
+		kirmiziBalon.dispose();
+		sariBalon.dispose();
 		bucketImage.dispose();
 		dropSound.dispose();
 		rainMusic.dispose();
