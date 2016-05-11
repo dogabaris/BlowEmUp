@@ -11,6 +11,5 @@ public class Oyun extends AndroidApplication {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		initialize(new BlowEmUp(), config);
-
 	}
 }

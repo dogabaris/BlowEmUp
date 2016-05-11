@@ -28,8 +28,8 @@ public class Main extends Activity {
             btn_yeni.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent secim = new Intent(v.getContext(), Secim.class);
-                    startActivity(secim);
+                    Intent oyun = new Intent(v.getContext(), Oyun.class);
+                    startActivity(oyun);
                 }
             });
 
