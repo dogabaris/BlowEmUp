@@ -2,5 +2,7 @@
 <resources>
 
     <string name="app_name">BlowEmUp</string>
+    <string name="ma_ara">Mağara</string>
+    <string name="kumsal">Kumsal</string>
 
 </resources>

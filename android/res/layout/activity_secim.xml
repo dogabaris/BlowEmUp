@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/background">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ma_ara"
+        android:id="@+id/btn_background1"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignTop="@+id/btn_background2"
+        android:layout_toLeftOf="@+id/btn_background2"
+        android:layout_toStartOf="@+id/btn_background2" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Duvar"
+        android:id="@+id/btn_background2"
+        android:layout_alignTop="@+id/btn_background3"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/kumsal"
+        android:id="@+id/btn_background3"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/btn_background2"
+        android:layout_toEndOf="@+id/btn_background2" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Oyna!"
+        android:id="@+id/btn_oyna"
+        android:layout_alignTop="@+id/btn_background3"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/iw_background"
+        android:layout_alignBottom="@+id/btn_background3"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>

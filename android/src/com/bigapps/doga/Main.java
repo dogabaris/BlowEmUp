@@ -12,10 +12,11 @@ import android.widget.Toast;
  * Created by shadyfade on 06.05.2016.
  */
 public class Main extends Activity {
+    private int ses = 1;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         try {
             setContentView(R.layout.activity_oyun);
 
@@ -27,8 +28,24 @@ public class Main extends Activity {
             btn_yeni.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent oyun = new Intent(v.getContext(), Oyun.class);
-                    startActivity(oyun);
+                    Intent secim = new Intent(v.getContext(), Secim.class);
+                    startActivity(secim);
+                }
+            });
+
+            btn_ses.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(ses==0){
+                        ses=1;
+                        Ayarlar.get().setSes(1);
+                        Toast.makeText(Main.this,"Ses Açıldı!",Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        ses=0;
+                        Ayarlar.get().setSes(0);
+                        Toast.makeText(Main.this,"Ses Kapatıldı!",Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 

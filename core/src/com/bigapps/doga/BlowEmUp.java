@@ -24,6 +24,7 @@ public class BlowEmUp extends Game implements InputProcessor {
 	private Texture siyahBalon;
 	private Texture kirmiziBalon;
 	private Texture sariBalon;
+	private Texture background;
 	private Sound dropSound;
 	private Music rainMusic;
 	private SpriteBatch batch;
@@ -33,7 +34,6 @@ public class BlowEmUp extends Game implements InputProcessor {
 	private long siyahDropTime;
 	private long kirmiziDropTime;
 	private long sariDropTime;
-	private long tiklamaDropTime;
 	private int random;
 	private TouchInfo touch;
 	private int touchX;
@@ -96,26 +96,23 @@ public class BlowEmUp extends Game implements InputProcessor {
 
 		Gdx.input.setInputProcessor(this);
 
-		// load the images for the droplet and the bucket, 64x64 pixels each
 		yesilBalon = new Texture(Gdx.files.internal("yesilbalon.png"));
 		kirmiziBalon = new Texture(Gdx.files.internal("kirmizibalon.png"));
 		siyahBalon = new Texture(Gdx.files.internal("siyahbalon.png"));
 		sariBalon = new Texture(Gdx.files.internal("saribalon.png"));
+		background = new Texture(Gdx.files.internal("background1.jpg"));
 
-		// load
 		dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
 		rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
 
-		// start the playback of the background music immediately
 		rainMusic.setLooping(true);
 		rainMusic.play();
 
-		// create the camera and the SpriteBatch
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 800, 480);
 		batch = new SpriteBatch();
 
-		// create the raindrops array and spawn the first raindrop
+
 		balonlar = new HashMap<String, Rectangle>();
 		touch = new TouchInfo();
 
@@ -159,23 +156,19 @@ public class BlowEmUp extends Game implements InputProcessor {
 
 	@Override
 	public void render () {
-		// clear the screen with a dark blue color. The
-		// arguments to glClearColor are the red, green
-		// blue and alpha component in the range [0,1]
-		// of the color to be used to clear the screen.
 		Gdx.gl.glClearColor(0, 0, 0.2f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		// tell the camera to update its matrices.
 		camera.update();
 
-		// tell the SpriteBatch to render in the
-		// coordinate system specified by the camera.
+
 		batch.setProjectionMatrix(camera.combined);
 
-		// begin a new batch and draw the bucket and
-		// all drops
+
 		batch.begin();
+		//backgroundSprite.draw(batch);
+		//batch.draw(background,0,0,Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		batch.draw(background,0,0,800, 480);
 
 		for(Map.Entry<String, Rectangle> entry : balonlar.entrySet()) {
 			String tur = entry.getKey();
@@ -203,7 +196,7 @@ public class BlowEmUp extends Game implements InputProcessor {
 			touchDown(touchX,touchY,0, Input.Buttons.LEFT);
 		}
 
-		// check if we need to create a new raindrop
+
 		if(TimeUtils.nanoTime() - yesilDropTime > MathUtils.random(1200000000, 1400000000)) yesilBalonOlustur();
 		if(TimeUtils.nanoTime() - siyahDropTime > MathUtils.random(1200000000, 1300000000)) siyahBalonOlustur();
 		if(TimeUtils.nanoTime() - kirmiziDropTime > MathUtils.random(1200000000, 1500000000)) kirmiziBalonOlustur();
