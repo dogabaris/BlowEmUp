@@ -41,6 +41,8 @@ public class BlowEmUp extends Game implements InputProcessor {
 	private TouchInfo touch;
 	private int touchX;
 	private int touchY;
+	private JsonValue sesAyari;
+	private JsonValue backgroundAyari;
 
 	class TouchInfo {
 		public float touchX = -10;
@@ -104,13 +106,14 @@ public class BlowEmUp extends Game implements InputProcessor {
 		String text = file.readString();
 
 		JsonValue json = new JsonReader().parse(file);
-		JsonValue sesAyari = json.get("ses");
-		JsonValue backgroundAyari = json.get("background");
+		sesAyari = json.get("ses");
+		backgroundAyari = json.get("background");
 
 		yesilBalon = new Texture(Gdx.files.internal("yesilbalon.png"));
 		kirmiziBalon = new Texture(Gdx.files.internal("kirmizibalon.png"));
 		siyahBalon = new Texture(Gdx.files.internal("siyahbalon.png"));
 		sariBalon = new Texture(Gdx.files.internal("saribalon.png"));
+
 		switch (backgroundAyari.asInt()){
 			case 1 : background = new Texture(Gdx.files.internal("background1.jpg")); break;
 			case 2 : background = new Texture(Gdx.files.internal("background2.jpg")); break;
@@ -124,8 +127,11 @@ public class BlowEmUp extends Game implements InputProcessor {
 		dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
 		rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
 
-		rainMusic.setLooping(true);
-		rainMusic.play();
+		if(sesAyari.asInt()==1){
+			rainMusic.setLooping(true);
+			rainMusic.play();
+		}
+
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 800, 480);
@@ -243,7 +249,8 @@ public class BlowEmUp extends Game implements InputProcessor {
 			if(balon.y + 64 < 0)
 				it.remove();
 			if(balon.contains(touch.touchX,touch.touchY) && touch.touched) {//Balona dokunulduğunda
-				dropSound.play();
+				if(sesAyari.asInt()==1)
+					dropSound.play();
 				it.remove();
 				touchUp(touchX,touchY,0, Input.Buttons.LEFT);
 				System.out.println(touch.touched +" "+touch.touchX +" "+ touch.touchY);
