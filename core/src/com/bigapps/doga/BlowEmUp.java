@@ -38,12 +38,15 @@ public class BlowEmUp extends Game implements InputProcessor {
 	private long siyahDropTime;
 	private long kirmiziDropTime;
 	private long sariDropTime;
+	private long zamanDropTime;
 	private int random;
 	private TouchInfo touch;
 	private int touchX;
 	private int touchY;
 	private JsonValue sesAyari;
 	private JsonValue backgroundAyari;
+	private int zaman;
+	private String zamanString;
 	private int score;
 	private String scoreString;
 	BitmapFont font;
@@ -144,8 +147,12 @@ public class BlowEmUp extends Game implements InputProcessor {
 		balonlar = new HashMap<String, Rectangle>();
 		touch = new TouchInfo();
 
+		zaman = 30;
+		zamanString = "Zaman: 30";
+		zamanDropTime = TimeUtils.nanoTime();
+
 		score = 0;
-		scoreString = "score: 0";
+		scoreString = "Skor: 0";
 		font = new BitmapFont();
 
 	}
@@ -198,14 +205,12 @@ public class BlowEmUp extends Game implements InputProcessor {
 
 		batch.begin();
 
-		//backgroundSprite.draw(batch);
-		//batch.draw(background,0,0,Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		batch.draw(background,0,0,800, 480);
-
 
 		font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 		font.getData().setScale(2f,2f);
-		font.draw(batch, scoreString, 10, 30);
+		font.draw(batch, scoreString, 0, 30);
+		font.draw(batch, zamanString, 165, 30);
 
 		for(Map.Entry<String, Rectangle> entry : balonlar.entrySet()) {
 			String tur = entry.getKey();
@@ -241,6 +246,13 @@ public class BlowEmUp extends Game implements InputProcessor {
 		if(TimeUtils.nanoTime() - siyahDropTime > MathUtils.random(1200000000, 1300000000)) siyahBalonOlustur();
 		if(TimeUtils.nanoTime() - kirmiziDropTime > MathUtils.random(1200000000, 1500000000)) kirmiziBalonOlustur();
 		if(TimeUtils.nanoTime() - sariDropTime > 1000000000) sariBalonOlustur();
+		if (TimeUtils.timeSinceNanos(zamanDropTime) > 1000000000) {
+			zaman--;
+			zamanString = "Zaman: " + zaman;
+
+			zamanDropTime = TimeUtils.nanoTime();
+		}
+
 
 		for(Iterator<Map.Entry<String, Rectangle>> it = balonlar.entrySet().iterator(); it.hasNext(); ) {
 			Map.Entry<String, Rectangle> entry = it.next();
@@ -278,7 +290,8 @@ public class BlowEmUp extends Game implements InputProcessor {
 				}else if(ozellik.equals("siyahbalon")){
 					score-=10;
 				}
-				scoreString = "score: " + score;
+				scoreString = "Skor: " + score;
+
 
 				it.remove();
 				touchUp(touchX,touchY,0, Input.Buttons.LEFT);
