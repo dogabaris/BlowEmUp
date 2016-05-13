@@ -93,8 +93,11 @@ public class BlowEmUp extends Game implements InputProcessor {
 
 	@Override
 	public void create () {
-
 		Gdx.input.setInputProcessor(this);
+
+		boolean exists = Gdx.files.local("data.json").exists();//yolu buluyor mu kontrolü
+
+
 
 		yesilBalon = new Texture(Gdx.files.internal("yesilbalon.png"));
 		kirmiziBalon = new Texture(Gdx.files.internal("kirmizibalon.png"));
@@ -112,9 +115,10 @@ public class BlowEmUp extends Game implements InputProcessor {
 		camera.setToOrtho(false, 800, 480);
 		batch = new SpriteBatch();
 
-
 		balonlar = new HashMap<String, Rectangle>();
 		touch = new TouchInfo();
+
+
 
 	}
 	private void yesilBalonOlustur() {
