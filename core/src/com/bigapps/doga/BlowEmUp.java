@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,6 +14,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.HashMap;
@@ -97,13 +100,26 @@ public class BlowEmUp extends Game implements InputProcessor {
 
 		boolean exists = Gdx.files.local("data.json").exists();//yolu buluyor mu kontrolü
 
+		FileHandle file = Gdx.files.local("data.json");
+		String text = file.readString();
 
+		JsonValue json = new JsonReader().parse(file);
+		JsonValue sesAyari = json.get("ses");
+		JsonValue backgroundAyari = json.get("background");
 
 		yesilBalon = new Texture(Gdx.files.internal("yesilbalon.png"));
 		kirmiziBalon = new Texture(Gdx.files.internal("kirmizibalon.png"));
 		siyahBalon = new Texture(Gdx.files.internal("siyahbalon.png"));
 		sariBalon = new Texture(Gdx.files.internal("saribalon.png"));
-		background = new Texture(Gdx.files.internal("background1.jpg"));
+		switch (backgroundAyari.asInt()){
+			case 1 : background = new Texture(Gdx.files.internal("background1.jpg")); break;
+			case 2 : background = new Texture(Gdx.files.internal("background2.jpg")); break;
+			case 3 : background = new Texture(Gdx.files.internal("background3.png")); break;
+			default: background = new Texture(Gdx.files.internal("background1.jpg")); break;
+		}
+
+		file.delete();
+
 
 		dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
 		rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
