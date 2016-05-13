@@ -10,6 +10,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -43,6 +44,9 @@ public class BlowEmUp extends Game implements InputProcessor {
 	private int touchY;
 	private JsonValue sesAyari;
 	private JsonValue backgroundAyari;
+	private int score;
+	private String scoreString;
+	BitmapFont font;
 
 	class TouchInfo {
 		public float touchX = -10;
@@ -103,7 +107,7 @@ public class BlowEmUp extends Game implements InputProcessor {
 		boolean exists = Gdx.files.local("data.json").exists();//yolu buluyor mu kontrolü
 
 		FileHandle file = Gdx.files.local("data.json");
-		String text = file.readString();
+		//String text = file.readString();
 
 		JsonValue json = new JsonReader().parse(file);
 		sesAyari = json.get("ses");
@@ -140,7 +144,9 @@ public class BlowEmUp extends Game implements InputProcessor {
 		balonlar = new HashMap<String, Rectangle>();
 		touch = new TouchInfo();
 
-
+		score = 0;
+		scoreString = "score: 0";
+		font = new BitmapFont();
 
 	}
 	private void yesilBalonOlustur() {
@@ -190,11 +196,15 @@ public class BlowEmUp extends Game implements InputProcessor {
 
 		batch.setProjectionMatrix(camera.combined);
 
-
 		batch.begin();
+
 		//backgroundSprite.draw(batch);
 		//batch.draw(background,0,0,Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		batch.draw(background,0,0,800, 480);
+
+		
+		font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+		font.draw(batch, scoreString, 25, 100);
 
 		for(Map.Entry<String, Rectangle> entry : balonlar.entrySet()) {
 			String tur = entry.getKey();
@@ -210,6 +220,9 @@ public class BlowEmUp extends Game implements InputProcessor {
 				batch.draw(sariBalon, balon.x, balon.y);
 
 		}
+
+
+
 		batch.end();
 
 		// process user input
@@ -262,6 +275,7 @@ public class BlowEmUp extends Game implements InputProcessor {
 	@Override
 	public void dispose() {
 		// dispose of all the native resources
+		font.dispose();
 		yesilBalon.dispose();
 		siyahBalon.dispose();
 		kirmiziBalon.dispose();
