@@ -202,9 +202,10 @@ public class BlowEmUp extends Game implements InputProcessor {
 		//batch.draw(background,0,0,Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		batch.draw(background,0,0,800, 480);
 
-		
+
 		font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-		font.draw(batch, scoreString, 25, 100);
+		font.getData().setScale(2f,2f);
+		font.draw(batch, scoreString, 10, 30);
 
 		for(Map.Entry<String, Rectangle> entry : balonlar.entrySet()) {
 			String tur = entry.getKey();
@@ -244,6 +245,7 @@ public class BlowEmUp extends Game implements InputProcessor {
 		for(Iterator<Map.Entry<String, Rectangle>> it = balonlar.entrySet().iterator(); it.hasNext(); ) {
 			Map.Entry<String, Rectangle> entry = it.next();
 			Rectangle balon = entry.getValue();
+			String ozellik=entry.getKey();
 
 			if(entry.getKey().equals("saribalon")){
 				balon.x +=  Gdx.graphics.getDeltaTime();
@@ -256,7 +258,10 @@ public class BlowEmUp extends Game implements InputProcessor {
 				if(random<=0)
 					balon.x += random;
 			}
-			else if(entry.getKey().equals("yesilbalon")||entry.getKey().equals("siyahbalon")){
+			else if(entry.getKey().equals("yesilbalon")){
+				balon.y += 480 * Gdx.graphics.getDeltaTime();
+			}
+			else if(entry.getKey().equals("siyahbalon")){
 				balon.y += 480 * Gdx.graphics.getDeltaTime();
 			}
 			if(balon.y + 64 < 0)
@@ -264,6 +269,17 @@ public class BlowEmUp extends Game implements InputProcessor {
 			if(balon.contains(touch.touchX,touch.touchY) && touch.touched) {//Balona dokunulduğunda
 				if(sesAyari.asInt()==1)
 					dropSound.play();
+				if(ozellik.equals("saribalon")){
+					score+=20;
+				}else if(ozellik.equals("kirmizibalon")){
+					score+=10;
+				}else if(ozellik.equals("yesilbalon")){
+					score+=5;
+				}else if(ozellik.equals("siyahbalon")){
+					score-=10;
+				}
+				scoreString = "score: " + score;
+
 				it.remove();
 				touchUp(touchX,touchY,0, Input.Buttons.LEFT);
 				System.out.println(touch.touched +" "+touch.touchX +" "+ touch.touchY);
