@@ -53,6 +53,7 @@ public class BlowEmUp extends Game implements InputProcessor {
 	private String highscoreString;
 	private int level;
 	private String levelString;
+	private int kirmiziflag=0,siyahflag=0,yesilflag=0,sariflag=0,gameover=0;
 	BitmapFont font;
 
 	class TouchInfo {
@@ -214,18 +215,18 @@ public class BlowEmUp extends Game implements InputProcessor {
 
 		batch.draw(background,0,0,800, 480);
 
-		if(zaman<=0 && score<100){//game over level değişmesi
-			if(level==1){
-				highscore=score;
-				highscoreString = "Highscore:"+highscore;
-				font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-				font.getData().setScale(2f,2f);
-				font.draw(batch, highscoreString, 370, 240);
-			}else{
-				font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-				font.getData().setScale(2f,2f);
-				font.draw(batch, highscoreString, 370, 240);
-			}
+		if(zaman<=0 && score<100 || gameover==1){//game over level değişmesi
+				if(level==1){
+					highscore=score;
+					highscoreString = "Highscore:"+highscore;
+					font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+					font.getData().setScale(2f,2f);
+					font.draw(batch, highscoreString, 370, 240);
+				}else{
+					font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+					font.getData().setScale(2f,2f);
+					font.draw(batch, highscoreString, 370, 240);
+				}
 		}else{
 			font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 			font.getData().setScale(2f,2f);
@@ -272,16 +273,24 @@ public class BlowEmUp extends Game implements InputProcessor {
 			zamanDropTime = TimeUtils.nanoTime();
 		}
 		if(zaman<=0 && score>=100){//100 scoredan yüksekse skor highscore a aktarılır.Score ve zaman yenilenir.Level arttırılır
-			highscore+=score;
-			highscoreString = "Highscore: " + highscore;
-			score = 0;
-			scoreString = "Skor: " + score;
-			zaman = 30;
-			zamanString = "Zaman: " + zaman;
-			level++;
-			levelString = "Level: " + level;
+			if(kirmiziflag==1 && sariflag==1 && yesilflag==1 && siyahflag==1){
+				highscore+=score;
+				highscoreString = "Highscore: " + highscore;
+				score = 0;
+				scoreString = "Skor: " + score;
+				zaman = 30;
+				zamanString = "Zaman: " + zaman;
+				level++;
+				levelString = "Level: " + level;
+				kirmiziflag=0;
+				sariflag=0;
+				yesilflag=0;
+				siyahflag=0;
+			}
+			else{
+				gameover=1;
+			}
 		}
-
 
 		for(Iterator<Map.Entry<String, Rectangle>> it = balonlar.entrySet().iterator(); it.hasNext(); ) {
 			Map.Entry<String, Rectangle> entry = it.next();
@@ -312,12 +321,16 @@ public class BlowEmUp extends Game implements InputProcessor {
 					dropSound.play();
 				if(ozellik.equals("saribalon")){
 					score+=20;
+					sariflag=1;
 				}else if(ozellik.equals("kirmizibalon")){
 					score+=10;
+					kirmiziflag=1;
 				}else if(ozellik.equals("yesilbalon")){
 					score+=5;
+					yesilflag=1;
 				}else if(ozellik.equals("siyahbalon")){
 					score-=10;
+					siyahflag=1;
 				}
 				scoreString = "Skor: " + score;
 
