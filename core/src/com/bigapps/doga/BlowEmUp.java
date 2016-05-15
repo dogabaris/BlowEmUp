@@ -40,6 +40,8 @@ public class BlowEmUp extends Game implements InputProcessor {
 	private long kirmiziDropTime;
 	private long sariDropTime;
 	private long zamanDropTime;
+	private long yesildensiyahaTime;
+	private long siyahtanyesileTime;
 	private int random;
 	private TouchInfo touch;
 	private int touchX;
@@ -136,9 +138,8 @@ public class BlowEmUp extends Game implements InputProcessor {
 
 		file.delete();
 
-
-		dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
-		rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
+		dropSound = Gdx.audio.newSound(Gdx.files.internal("patlama.wav"));
+		rainMusic = Gdx.audio.newMusic(Gdx.files.internal("muzik.mp3"));
 
 		if(sesAyari.asInt()==1){
 			rainMusic.setLooping(true);
@@ -268,7 +269,6 @@ public class BlowEmUp extends Game implements InputProcessor {
 			touchDown(touchX,touchY,0, Input.Buttons.LEFT);
 		}
 
-
 		if(TimeUtils.nanoTime() - yesilDropTime > MathUtils.random(1200000000, 1700000000)) yesilBalonOlustur();
 		if(TimeUtils.nanoTime() - siyahDropTime > MathUtils.random(1200000000, 1300000000)) siyahBalonOlustur();
 		if(TimeUtils.nanoTime() - kirmiziDropTime > MathUtils.random(1200000000, 1500000000)) kirmiziBalonOlustur();
@@ -279,6 +279,8 @@ public class BlowEmUp extends Game implements InputProcessor {
 
 			zamanDropTime = TimeUtils.nanoTime();
 		}
+
+
 		if(zaman<=0 && score>=100){//100 scoredan yüksekse skor highscore a aktarılır.Score ve zaman yenilenir.Level arttırılır
 			if(kirmiziflag==1 && sariflag==1 && yesilflag==1 && siyahflag==1){
 				highscore+=score;
@@ -299,9 +301,9 @@ public class BlowEmUp extends Game implements InputProcessor {
 			}
 		}
 
-		for(Iterator<Map.Entry<String, Rectangle>> it = balonlar.entrySet().iterator(); it.hasNext(); ) {
+		for(final Iterator<Map.Entry<String, Rectangle>> it = balonlar.entrySet().iterator(); it.hasNext(); ) {
 			Map.Entry<String, Rectangle> entry = it.next();
-			Rectangle balon = entry.getValue();
+			final Rectangle balon = entry.getValue();
 			String ozellik=entry.getKey();
 
 			if(entry.getKey().equals("saribalon")){
@@ -317,6 +319,27 @@ public class BlowEmUp extends Game implements InputProcessor {
 			}
 			else if(entry.getKey().equals("yesilbalon")){
 				balon.y += 480 * Gdx.graphics.getDeltaTime();
+
+				/*Timer.schedule(new Timer.Task(){
+					@Override
+					public void run() {
+						it.remove();
+
+						Rectangle siyahBalon = new Rectangle();
+						siyahBalon.x = balon.x;
+						siyahBalon.y = balon.y;
+						siyahBalon.width = 64;
+						siyahBalon.height = 64;
+
+						balonlar.put("siyahBalon",siyahBalon);
+					}
+				}, MathUtils.random(0, 10));
+
+				//if (TimeUtils.timeSinceNanos(yesildensiyahaTime) > 1000000000) {
+
+
+				//	yesildensiyahaTime = TimeUtils.nanoTime();
+				//}*/
 			}
 			else if(entry.getKey().equals("siyahbalon")){
 				balon.y += 480 * Gdx.graphics.getDeltaTime();
