@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.Timer;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -221,12 +222,18 @@ public class BlowEmUp extends Game implements InputProcessor {
 					highscoreString = "Highscore:"+highscore;
 					font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 					font.getData().setScale(2f,2f);
-					font.draw(batch, highscoreString, 370, 240);
+					font.draw(batch, highscoreString, 340, 240);
 				}else{
 					font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 					font.getData().setScale(2f,2f);
-					font.draw(batch, highscoreString, 370, 240);
+					font.draw(batch, highscoreString, 340, 240);
 				}
+				Timer.schedule(new Timer.Task(){
+					@Override
+					public void run() {
+						Gdx.app.exit();
+					}
+				}, 2);
 		}else{
 			font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 			font.getData().setScale(2f,2f);

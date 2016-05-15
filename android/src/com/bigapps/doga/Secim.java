@@ -84,7 +84,7 @@ public class Secim extends Activity{
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
+                Secim.this.finish();
                 Intent oyun = new Intent(v.getContext(), Oyun.class);
                 startActivity(oyun);
             }
