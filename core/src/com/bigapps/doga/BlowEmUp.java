@@ -57,6 +57,10 @@ public class BlowEmUp extends Game implements InputProcessor {
 	private String highscoreString;
 	private int level;
 	private String levelString;
+	private String yesilText;
+	private String siyahText;
+	private String sariText;
+	private String kirmiziText;
 	private int kirmiziflag=0,siyahflag=0,yesilflag=0,sariflag=0,gameover=0;
 	BitmapFont font;
 	private boolean breakflag=false;
@@ -169,6 +173,11 @@ public class BlowEmUp extends Game implements InputProcessor {
 
 		level = 1;
 		levelString = "Level: 1";
+
+		siyahText	= "Siyah";
+		yesilText 	= "Yesil";
+		sariText  	= "Sari";
+		kirmiziText = "Kirmizi";
 		font = new BitmapFont();
 
 		yesildenSiyahaRandomTime = MathUtils.random(0, 10000);
@@ -249,6 +258,10 @@ public class BlowEmUp extends Game implements InputProcessor {
 			font.draw(batch, scoreString, 0, 30);
 			font.draw(batch, zamanString, 165, 30);
 			font.draw(batch, levelString, 315, 30);
+			font.draw(batch, siyahText, 425, 30);
+			font.draw(batch, yesilText, 525, 30);
+			font.draw(batch, sariText, 625, 30);
+			font.draw(batch, kirmiziText, 700, 30);
 
 			for(Map.Entry<String, Rectangle> entry : balonlar.entrySet()) {
 				String tur = entry.getKey();
@@ -271,7 +284,7 @@ public class BlowEmUp extends Game implements InputProcessor {
 
 		batch.end();
 
-		// process user input
+
 		if(Gdx.input.isTouched()) {
 			Vector3 touchPos = new Vector3();
 			touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
@@ -307,6 +320,10 @@ public class BlowEmUp extends Game implements InputProcessor {
 				sariflag=0;
 				yesilflag=0;
 				siyahflag=0;
+				siyahText="Siyah";
+				sariText="Sari";
+				yesilText="Yesil";
+				kirmiziText="Kirmizi";
 			}
 			else{
 				gameover=1;
@@ -393,15 +410,19 @@ public class BlowEmUp extends Game implements InputProcessor {
 				if(ozellik.equals("saribalon")){
 					score+=20;
 					sariflag=1;
+					sariText="";
 				}else if(ozellik.equals("kirmizibalon")){
 					score+=10;
 					kirmiziflag=1;
-				}else if(ozellik.equals("yesilbalon")){
+					kirmiziText="";
+				}else if(ozellik.equals("yesilbalon") || ozellik.equals("yesilbalon2")){
 					score+=5;
 					yesilflag=1;
+					yesilText="";
 				}else if(ozellik.equals("siyahbalon") || ozellik.equals("siyahbalon2")){
 					score-=10;
 					siyahflag=1;
+					siyahText="";
 				}
 				scoreString = "Skor: " + score;
 
@@ -415,7 +436,6 @@ public class BlowEmUp extends Game implements InputProcessor {
 	}
 	@Override
 	public void dispose() {
-		// dispose of all the native resources
 		font.dispose();
 		yesilBalon.dispose();
 		siyahBalon.dispose();
