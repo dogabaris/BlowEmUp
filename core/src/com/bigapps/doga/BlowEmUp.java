@@ -27,6 +27,7 @@ import java.util.Map;
 public class BlowEmUp extends Game implements InputProcessor {
 	private Texture yesilBalon;
 	private Texture siyahBalon;
+	private Texture siyahBalon2;
 	private Texture kirmiziBalon;
 	private Texture sariBalon;
 	private Texture background;
@@ -41,7 +42,6 @@ public class BlowEmUp extends Game implements InputProcessor {
 	private long sariDropTime;
 	private long zamanDropTime;
 	private long yesildensiyahaTime;
-	private long siyahtanyesileTime;
 	private int random;
 	private TouchInfo touch;
 	private int touchX;
@@ -58,6 +58,8 @@ public class BlowEmUp extends Game implements InputProcessor {
 	private String levelString;
 	private int kirmiziflag=0,siyahflag=0,yesilflag=0,sariflag=0,gameover=0;
 	BitmapFont font;
+	private boolean breakflag=false;
+	private int yesildenSiyahaRandomTime;
 
 	class TouchInfo {
 		public float touchX = -10;
@@ -127,6 +129,7 @@ public class BlowEmUp extends Game implements InputProcessor {
 		yesilBalon = new Texture(Gdx.files.internal("yesilbalon.png"));
 		kirmiziBalon = new Texture(Gdx.files.internal("kirmizibalon.png"));
 		siyahBalon = new Texture(Gdx.files.internal("siyahbalon.png"));
+		siyahBalon2 = new Texture(Gdx.files.internal("siyahbalon.png"));
 		sariBalon = new Texture(Gdx.files.internal("saribalon.png"));
 
 		switch (backgroundAyari.asInt()){
@@ -164,6 +167,8 @@ public class BlowEmUp extends Game implements InputProcessor {
 		level = 1;
 		levelString = "Level: 1";
 		font = new BitmapFont();
+
+		yesildenSiyahaRandomTime = MathUtils.random(0, 10000);
 
 	}
 	private void yesilBalonOlustur() {
@@ -254,6 +259,8 @@ public class BlowEmUp extends Game implements InputProcessor {
 					batch.draw(kirmiziBalon, balon.x, balon.y);
 				if(tur.equals("saribalon"))
 					batch.draw(sariBalon, balon.x, balon.y);
+				if(tur.equals("siyahbalon2"))
+					batch.draw(siyahBalon2, balon.x, balon.y);
 			}
 		}
 
@@ -306,6 +313,7 @@ public class BlowEmUp extends Game implements InputProcessor {
 			final Rectangle balon = entry.getValue();
 			String ozellik=entry.getKey();
 
+
 			if(entry.getKey().equals("saribalon")){
 				balon.x +=  Gdx.graphics.getDeltaTime();
 			}
@@ -320,28 +328,31 @@ public class BlowEmUp extends Game implements InputProcessor {
 			else if(entry.getKey().equals("yesilbalon")){
 				balon.y += 480 * Gdx.graphics.getDeltaTime();
 
-				/*Timer.schedule(new Timer.Task(){
-					@Override
-					public void run() {
-						it.remove();
+				if(TimeUtils.timeSinceMillis(yesildensiyahaTime) > yesildenSiyahaRandomTime) {
+					Rectangle siyahBalon = new Rectangle();
+					siyahBalon.x = balon.x;
+					siyahBalon.y = balon.y;
+					siyahBalon.width = 64;
+					siyahBalon.height = 64;
 
-						Rectangle siyahBalon = new Rectangle();
-						siyahBalon.x = balon.x;
-						siyahBalon.y = balon.y;
-						siyahBalon.width = 64;
-						siyahBalon.height = 64;
+					it.remove();
 
-						balonlar.put("siyahBalon",siyahBalon);
-					}
-				}, MathUtils.random(0, 10));
+					balonlar.put("siyahbalon2",siyahBalon);
+					breakflag=true;
 
-				//if (TimeUtils.timeSinceNanos(yesildensiyahaTime) > 1000000000) {
+					yesildenSiyahaRandomTime = MathUtils.random(0, 10000);
+					yesildensiyahaTime = TimeUtils.millis();
+				}
 
+				if(breakflag){
+					breakflag=false;
+					break;
+				}
 
-				//	yesildensiyahaTime = TimeUtils.nanoTime();
-				//}*/
 			}
 			else if(entry.getKey().equals("siyahbalon")){
+				balon.y += 480 * Gdx.graphics.getDeltaTime();
+			}else if(entry.getKey().equals("siyahbalon2")){
 				balon.y += 480 * Gdx.graphics.getDeltaTime();
 			}
 			if(balon.y + 64 < 0)
@@ -358,7 +369,7 @@ public class BlowEmUp extends Game implements InputProcessor {
 				}else if(ozellik.equals("yesilbalon")){
 					score+=5;
 					yesilflag=1;
-				}else if(ozellik.equals("siyahbalon")){
+				}else if(ozellik.equals("siyahbalon") || ozellik.equals("siyahbalon2")){
 					score-=10;
 					siyahflag=1;
 				}
