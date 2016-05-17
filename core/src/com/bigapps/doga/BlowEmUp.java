@@ -26,6 +26,7 @@ import java.util.Map;
 
 public class BlowEmUp extends Game implements InputProcessor {
 	private Texture yesilBalon;
+	private Texture yesilBalon2;
 	private Texture siyahBalon;
 	private Texture siyahBalon2;
 	private Texture kirmiziBalon;
@@ -41,7 +42,7 @@ public class BlowEmUp extends Game implements InputProcessor {
 	private long kirmiziDropTime;
 	private long sariDropTime;
 	private long zamanDropTime;
-	private long yesildensiyahaTime;
+	private long yesildensiyahaTime,siyahtanyesileTime;
 	private int random;
 	private TouchInfo touch;
 	private int touchX;
@@ -60,6 +61,7 @@ public class BlowEmUp extends Game implements InputProcessor {
 	BitmapFont font;
 	private boolean breakflag=false;
 	private int yesildenSiyahaRandomTime;
+	private int siyahtanYesileRandomTime;
 
 	class TouchInfo {
 		public float touchX = -10;
@@ -127,6 +129,7 @@ public class BlowEmUp extends Game implements InputProcessor {
 		backgroundAyari = json.get("background");
 
 		yesilBalon = new Texture(Gdx.files.internal("yesilbalon.png"));
+		yesilBalon2 = new Texture(Gdx.files.internal("yesilbalon.png"));
 		kirmiziBalon = new Texture(Gdx.files.internal("kirmizibalon.png"));
 		siyahBalon = new Texture(Gdx.files.internal("siyahbalon.png"));
 		siyahBalon2 = new Texture(Gdx.files.internal("siyahbalon.png"));
@@ -169,7 +172,7 @@ public class BlowEmUp extends Game implements InputProcessor {
 		font = new BitmapFont();
 
 		yesildenSiyahaRandomTime = MathUtils.random(0, 10000);
-
+		siyahtanYesileRandomTime = MathUtils.random(0, 10000);
 	}
 	private void yesilBalonOlustur() {
 		Rectangle yesilBalon = new Rectangle();
@@ -261,6 +264,8 @@ public class BlowEmUp extends Game implements InputProcessor {
 					batch.draw(sariBalon, balon.x, balon.y);
 				if(tur.equals("siyahbalon2"))
 					batch.draw(siyahBalon2, balon.x, balon.y);
+				if(tur.equals("yesilbalon2"))
+					batch.draw(yesilBalon2, balon.x, balon.y);
 			}
 		}
 
@@ -352,7 +357,32 @@ public class BlowEmUp extends Game implements InputProcessor {
 			}
 			else if(entry.getKey().equals("siyahbalon")){
 				balon.y += 480 * Gdx.graphics.getDeltaTime();
+
+				if(TimeUtils.timeSinceMillis(siyahtanyesileTime) > siyahtanYesileRandomTime) {
+					Rectangle yesilBalon = new Rectangle();
+					yesilBalon.x = balon.x;
+					yesilBalon.y = balon.y;
+					yesilBalon.width = 64;
+					yesilBalon.height = 64;
+
+					it.remove();
+
+					balonlar.put("yesilbalon2",yesilBalon);
+					breakflag=true;
+
+					siyahtanYesileRandomTime = MathUtils.random(0, 10000);
+					siyahtanyesileTime = TimeUtils.millis();
+				}
+
+				if(breakflag){
+					breakflag=false;
+					break;
+				}
+
 			}else if(entry.getKey().equals("siyahbalon2")){
+				balon.y += 480 * Gdx.graphics.getDeltaTime();
+			}
+			else if(entry.getKey().equals("yesilbalon2")){
 				balon.y += 480 * Gdx.graphics.getDeltaTime();
 			}
 			if(balon.y + 64 < 0)
