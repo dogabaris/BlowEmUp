@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import org.json.JSONException;
@@ -15,6 +14,8 @@ import org.json.JSONObject;
 
 import java.io.FileWriter;
 import java.io.IOException;
+
+import mehdi.sakout.fancybuttons.FancyButton;
 
 /**
  * Created by shadyfade on 11.05.2016.
@@ -27,10 +28,10 @@ public class Secim extends Activity{
         setContentView(R.layout.activity_secim);
 
         final ImageView background =(ImageView)findViewById(R.id.iw_background);
-        Button btn_magara = (Button) findViewById(R.id.btn_background1);
-        Button btn_duvar = (Button) findViewById(R.id.btn_background2);
-        Button btn_kumsal = (Button) findViewById(R.id.btn_background3);
-        Button btn_oyna = (Button) findViewById(R.id.btn_oyna);
+        FancyButton btn_magara = (FancyButton) findViewById(R.id.btn_background1);
+        FancyButton btn_duvar = (FancyButton) findViewById(R.id.btn_background2);
+        FancyButton btn_kumsal = (FancyButton) findViewById(R.id.btn_background3);
+        FancyButton btn_oyna = (FancyButton) findViewById(R.id.btn_oyna);
 
         background.setImageResource(R.drawable.background1);
 

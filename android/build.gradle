@@ -19,6 +19,9 @@ android {
         minSdkVersion 8
         targetSdkVersion 22
     }
+    dependencies{
+        compile 'com.github.medyo:fancybuttons:1.8.1'
+    }
 }
 
 

@@ -5,8 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
+
+import mehdi.sakout.fancybuttons.FancyButton;
 
 /**
  * Created by shadyfade on 06.05.2016.
@@ -20,10 +21,9 @@ public class Main extends Activity {
         try {
             setContentView(R.layout.activity_oyun);
 
-            Button btn_yeni = (Button) findViewById(R.id.btn_yenioyun);
-            Button btn_ses = (Button) findViewById(R.id.btn_ses);
-            Button btn_cikis = (Button) findViewById(R.id.btn_cikis);
-            Button btn_hakkinda = (Button) findViewById(R.id.btn_hakkinda);
+            FancyButton btn_yeni = (FancyButton) findViewById(R.id.btn_yenioyun);
+            FancyButton btn_ses = (FancyButton) findViewById(R.id.btn_ses);
+            FancyButton btn_cikis = (FancyButton) findViewById(R.id.btn_cikis);
 
             btn_yeni.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -46,14 +46,6 @@ public class Main extends Activity {
                         Ayarlar.get().setSes(0);
                         Toast.makeText(Main.this,"Ses Kapatıldı!",Toast.LENGTH_SHORT).show();
                     }
-                }
-            });
-
-            btn_hakkinda.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent hakkinda = new Intent(v.getContext(), Hakkinda.class);
-                    startActivity(hakkinda);
                 }
             });
 
