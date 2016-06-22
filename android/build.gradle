@@ -16,11 +16,12 @@ android {
     }
     defaultConfig {
         applicationId "com.bigapps.doga"
-        minSdkVersion 8
+        minSdkVersion 9
         targetSdkVersion 22
     }
     dependencies{
         compile 'com.github.medyo:fancybuttons:1.8.1'
+        compile 'com.google.android.gms:play-services-ads:8.4.0'
     }
 }
 
