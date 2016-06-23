@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">BlowEmUp</string>
+    <string name="app_name">Ball10</string>
     <string name="ma_ara">Mağara</string>
     <string name="kumsal">Kumsal</string>
     <string name="aciklama">Yeşil Balon +5 Puan \n Sarı balon +20 Puan \n Kırmızı Balon +10 Puan \n Siyah Balon -10 Puan \n Her seviye 30 saniye sürer. \n 100 puana ulaşılmazsa ya da her balondan 1 kere patlatılmazsa bölüm geçilemez.
     </string>
+    <string name="ad_unit_id">ca-app-pub-6164922138244802/8612526976</string>
+
 
 </resources>

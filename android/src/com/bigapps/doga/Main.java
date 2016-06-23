@@ -1,11 +1,14 @@
 package com.bigapps.doga;
 
 import android.app.Activity;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import java.io.FileReader;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 
@@ -24,6 +27,27 @@ public class Main extends Activity {
             FancyButton btn_yeni = (FancyButton) findViewById(R.id.btn_yenioyun);
             FancyButton btn_ses = (FancyButton) findViewById(R.id.btn_ses);
             FancyButton btn_cikis = (FancyButton) findViewById(R.id.btn_cikis);
+
+            ContextWrapper c = new ContextWrapper(Main.this);
+            String AbsolutePath = c.getFilesDir().getPath();
+            FileReader file;
+            boolean bool=false;
+
+            Intent Reklam = new Intent(this, Reklam.class);
+            startActivity(Reklam);
+
+            /*try{
+                file = new FileReader(AbsolutePath+"/data.json");
+                JsonValue json = new JsonReader().parse(file);
+                bool = json.has("bitti");
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if(bool){
+                Intent Reklam = new Intent(this, Reklam.class);
+                startActivity(Reklam);
+            }*/
 
             btn_yeni.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -228,6 +229,7 @@ public class BlowEmUp extends Game implements InputProcessor {
 		camera.update();
 
 
+
 		batch.setProjectionMatrix(camera.combined);
 
 		batch.begin();
@@ -251,7 +253,15 @@ public class BlowEmUp extends Game implements InputProcessor {
 					public void run() {
 						Gdx.app.exit();
 					}
-				}, 2);
+				}, 2);//Game OVER
+
+				Json overJson = new Json();
+				String score = overJson.toJson("bitti");
+
+				FileHandle file = Gdx.files.local("data.json");
+				file.writeString(score,true);
+
+
 		}else{
 			font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 			font.getData().setScale(2f,2f);
